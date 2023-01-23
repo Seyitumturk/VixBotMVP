@@ -18,10 +18,6 @@ const articleSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    openai: {
-        type: String,
-        required: true
-    },
     slug: {
         type: String,
         required: true,
