@@ -1,5 +1,17 @@
 const mongoose = require('mongoose')
+
+
 const slugify = require('slugify')
+
+const { Configuration, OpenAIApi } = require("openai");
+const configuration = new Configuration({
+    apiKey: "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"
+});
+
+
+
+const openai = new OpenAIApi(configuration);
+
 
 const articleSchema = new mongoose.Schema({
     title: {
@@ -18,14 +30,18 @@ const articleSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    openai: {
-        type: String,
-        required: true
-    },
     slug: {
         type: String,
         required: true,
-        unqie: true
+        unique: true,
+    },
+    prompt: {
+        type: String,
+        required: true,
+
+    },
+    response: {
+        type: String,
     }
 })
 
@@ -40,9 +56,26 @@ articleSchema.pre('validate', function (next) {
             strict: true
         })
     }
-
-
     next()
 })
 
-module.exports = mongoose.model('Article', articleSchema)
+const generateResponse = async (prompt) => {
+    try {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: prompt,
+            max_tokens: 100,
+            temperature: 0
+        });
+        return response.data.choices[0].text;
+    } catch (err) {
+        console.error(err);
+        return `An error occurred while generating the response: ${err.message}`;
+    }
+};
+
+
+const Article = mongoose.model('Article', articleSchema);
+module.exports = { Article, generateResponse: generateResponse }
+
+

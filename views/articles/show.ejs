@@ -26,6 +26,14 @@
         <div class="h2 mt-2">
             <%= article.markdown %>
         </div>
+        <div>
+            <% if(response) { %>
+                <h3>Response:</h3>
+                <p>
+                    <%= response %>
+                </p>
+                <% } %>
+        </div>
     </div>
 </body>
 
