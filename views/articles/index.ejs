@@ -16,6 +16,8 @@
 
         <h1 class="mb-4"> Vix Bot Articles</h1>
         <a href="/articles/new" class="btn btn-success"> New Article</a>
+        <a href="/users/login" class="btn btn-primary ml-50">Login</a>
+        <a href="/users/register" class="btn btn-secondary ml-50">Sign Up</a>
 
         <!-- Iterating over the "articles" object in our server, where all the data comes from.-->
         <% articles.forEach(article=> { %>
@@ -34,18 +36,21 @@
 
                         <%= article.description %>
 
-                            <div> <a href="articles/<%= article.slug %> " class="btn btn-primary  mt-5">Read More </a>
+                            <%= article.response%>
 
-                                <form action="/articles/<%= article.id %>?_method=DELETE" method="POST"
-                                    class="d-inline">
-                                    <button type="submit" class="btn btn-danger mt-5">Delete</button>
-                                </form>
 
-                            </div>
-                            <!--We can't use a a link to delete because when browser renders google clicks all of the links in our website.
+                                <div> <a href="articles/<%= article.slug %> " class="btn btn-primary  mt-5">Read More
+                                    </a>
+
+                                    <form action="/articles/<%= article.id %>?_method=DELETE" method="POST"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-danger mt-5">Delete</button>
+                                    </form>
+
+                                </div>
+                                <!--We can't use a a link to delete because when browser renders google clicks all of the links in our website.
                                 so it would delete it all. We will use forms to delete instead. 
                             -->
-
 
                     </div>
                 </div>

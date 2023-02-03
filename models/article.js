@@ -1,19 +1,20 @@
 const mongoose = require('mongoose')
-
-
 const slugify = require('slugify')
-
 const { Configuration, OpenAIApi } = require("openai");
+const User = require('./user')
+
+
 const configuration = new Configuration({
-    apiKey: "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"
+    apiKey: "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"
 });
-
-
-
 const openai = new OpenAIApi(configuration);
 
-
 const articleSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User,
+        required: true
+    },
     title: {
         type: String,
         required: true
@@ -38,16 +39,16 @@ const articleSchema = new mongoose.Schema({
     prompt: {
         type: String,
         required: true,
-
     },
     response: {
         type: String,
+    },
+    temperature: {
+        type: Number,
+        required: true,
+        default: 0
     }
 })
-
-// Slugs make the URL look prettier, replacing complex numeric ID with text
-// Every single time we do validation in our database, create, delete, save, update an article. This function in paramter will bu run
-
 
 articleSchema.pre('validate', function (next) {
     if (this.title) {
@@ -59,13 +60,13 @@ articleSchema.pre('validate', function (next) {
     next()
 })
 
-const generateResponse = async (prompt) => {
+const generateResponse = async (prompt, temperature) => {
     try {
         const response = await openai.createCompletion({
             model: "text-davinci-003",
             prompt: prompt,
             max_tokens: 100,
-            temperature: 0
+            temperature: temperature
         });
         return response.data.choices[0].text;
     } catch (err) {
@@ -74,8 +75,5 @@ const generateResponse = async (prompt) => {
     }
 };
 
-
 const Article = mongoose.model('Article', articleSchema);
 module.exports = { Article, generateResponse: generateResponse }
-
-

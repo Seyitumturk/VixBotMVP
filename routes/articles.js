@@ -4,11 +4,22 @@ const router = express.Router()
 
 const { Article, generateResponse } = require('./../models/article')
 
+// Render the login page
+router.get("/login", (req, res) => {
+    res.render("articles/login.ejs");
+});
 
-// Test router
-router.get('/test', (req, res) => {
-    res.render('articles/test')
-})
+// Handle user login
+router.post("/login", (req, res) => {
+    // Your logic for handling user login goes here
+});
+
+
+router.post("/signup", (req, res) => {
+    // Your logic for handling user login goes here
+});
+
+
 
 
 // Router for new article 
@@ -22,18 +33,22 @@ router.get('/new', (req, res) => {
 router.get('/edit/:id', async (req, res) => {
     const article = await Article.findById(req.params.id)
     res.render('articles/edit', { article: article })
-
 })
 
 
 
-// Routers for article thats created 
+// Routers for article thats created: this is where slug is used. 
+
 router.get('/:slug', async (req, res) => {
     const article = await Article.findOne({
         slug: req.params.slug
     })
     if (article == null) res.redirect('/')
-    res.render('articles/show', { article: article })
+    let response;
+    if (article.prompt) {
+        response = await generateResponse(article.prompt);
+    }
+    res.render('articles/show', { article: article, response: response })
 })
 
 
@@ -79,7 +94,7 @@ router.post('/', async (req, res) => {
     }
     catch (e) {
         console.log(e)
-        res.render('articles/new', { article: article })
+        res.render('articles/show', { article: article, response: response })
     }
 });
 //DELETE router 
